@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rumbo/app/app_routes.dart';
 import 'package:rumbo/app/shell/app_shell.dart';
+import 'package:rumbo/features/categories/presentation/pages/categories_page.dart';
 import 'package:rumbo/features/home/presentation/pages/home_page.dart';
 import 'package:rumbo/features/income_sources/presentation/pages/income_sources_page.dart';
 
@@ -24,6 +25,11 @@ final appRouterProvider = Provider<GoRouter>(
             path: AppRoutes.incomeSources,
             name: 'incomeSources',
             builder: (context, state) => const IncomeSourcesPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.categories,
+            name: 'categories',
+            builder: (context, state) => const CategoriesPage(),
           ),
         ],
       ),

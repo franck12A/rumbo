@@ -23,12 +23,40 @@ class _SchemaV1Database extends GeneratedDatabase {
   MigrationStrategy get migration => MigrationStrategy();
 }
 
+File _databaseFile(Directory directory) =>
+    File(p.join(directory.path, 'rumbo.sqlite'));
+
 Future<File> _createVersion1File(Directory directory) async {
-  final file = File(p.join(directory.path, 'rumbo.sqlite'));
+  final file = _databaseFile(directory);
   final legacy = _SchemaV1Database(NativeDatabase(file));
   await legacy.customStatement('PRAGMA user_version = 1');
   await legacy.close();
   return file;
+}
+
+/// Builds a version 2 file: income sources with an extra user row and no
+/// categories table yet.
+Future<File> _createVersion2File(Directory directory) async {
+  final file = _databaseFile(directory);
+  final current = AppDatabase.file(file);
+  await current
+      .into(current.incomeSources)
+      .insert(
+        IncomeSourcesCompanion.insert(
+          name: 'Kiosco',
+          colorValue: 0xFF1565C0,
+          createdAt: DateTime(2026),
+        ),
+      );
+  await current.customStatement('DROP TABLE categories');
+  await current.customStatement('PRAGMA user_version = 2');
+  await current.close();
+  return file;
+}
+
+Future<int> _schemaVersion(AppDatabase database) async {
+  final row = await database.customSelect('PRAGMA user_version').getSingle();
+  return row.read<int>('user_version');
 }
 
 void main() {
@@ -40,25 +68,47 @@ void main() {
 
   tearDown(() => directory.delete(recursive: true));
 
+  test('should upgrade a version 1 database and seed both features', () async {
+    final file = await _createVersion1File(directory);
+
+    final database = AppDatabase.file(file);
+    addTearDown(database.close);
+
+    final sources = await database.select(database.incomeSources).get();
+    final categories = await database.select(database.categories).get();
+
+    expect(sources, hasLength(2));
+    expect(
+      sources.map((row) => row.name),
+      containsAll(<String>['Reparación de pelotas', 'Restaurante']),
+    );
+    expect(categories, hasLength(4));
+    expect(
+      categories.map((row) => row.name),
+      containsAll(<String>['Materiales', 'Transporte', 'Comida', 'Otros']),
+    );
+    expect(await _schemaVersion(database), 3);
+  });
+
   test(
-    'should upgrade a version 1 database and seed the default sources',
+    'should upgrade a version 2 database without losing income sources',
     () async {
-      final file = await _createVersion1File(directory);
+      final file = await _createVersion2File(directory);
 
       final database = AppDatabase.file(file);
       addTearDown(database.close);
 
-      final rows = await database.select(database.incomeSources).get();
-      final version = await database
-          .customSelect('PRAGMA user_version')
-          .getSingle();
+      final sources = await database.select(database.incomeSources).get();
+      final categories = await database.select(database.categories).get();
 
-      expect(rows, hasLength(2));
+      expect(sources, hasLength(3));
+      expect(sources.map((row) => row.name), contains('Kiosco'));
+      expect(categories, hasLength(4));
       expect(
-        rows.map((row) => row.name),
-        containsAll(<String>['Reparación de pelotas', 'Restaurante']),
+        categories.map((row) => row.name),
+        containsAll(<String>['Materiales', 'Transporte', 'Comida', 'Otros']),
       );
-      expect(version.read<int>('user_version'), 2);
+      expect(await _schemaVersion(database), 3);
     },
   );
 
@@ -74,9 +124,11 @@ void main() {
       final reopened = AppDatabase.file(file);
       addTearDown(reopened.close);
 
-      final rows = await reopened.select(reopened.incomeSources).get();
+      final sources = await reopened.select(reopened.incomeSources).get();
+      final categories = await reopened.select(reopened.categories).get();
 
-      expect(rows, hasLength(2));
+      expect(sources, hasLength(2));
+      expect(categories, hasLength(4));
     },
   );
 }

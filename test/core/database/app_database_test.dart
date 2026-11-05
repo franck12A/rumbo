@@ -27,7 +27,7 @@ void main() {
     expect(row.read<int>('foreign_keys'), 1);
   });
 
-  test('should report schema version 2 when created', () {
-    expect(database.schemaVersion, 2);
+  test('should report schema version 3 when created', () {
+    expect(database.schemaVersion, 3);
   });
 }

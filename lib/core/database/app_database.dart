@@ -4,6 +4,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:rumbo/features/categories/data/daos/category_dao.dart';
+import 'package:rumbo/features/categories/data/tables/categories_table.dart';
 import 'package:rumbo/features/income_sources/data/daos/income_source_dao.dart';
 import 'package:rumbo/features/income_sources/data/tables/income_sources_table.dart';
 
@@ -12,7 +14,10 @@ part 'app_database.g.dart';
 /// Single SQLite database of the app.
 ///
 /// Business tables are declared by each feature and added to this class.
-@DriftDatabase(tables: [IncomeSources], daos: [IncomeSourceDao])
+@DriftDatabase(
+  tables: [IncomeSources, Categories],
+  daos: [IncomeSourceDao, CategoryDao],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -23,19 +28,25 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.file(File file) : super(NativeDatabase(file));
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async {
       await m.createAll();
       await _seedIncomeSources();
+      await _seedCategories();
     },
     onUpgrade: (m, from, to) async {
       if (from < 2) {
         await m.createTable(incomeSources);
         await m.createIndex(incomeSourcesArchivedAt);
         await _seedIncomeSources();
+      }
+      if (from < 3) {
+        await m.createTable(categories);
+        await m.createIndex(categoriesArchivedAt);
+        await _seedCategories();
       }
     },
     beforeOpen: (details) async {
@@ -55,6 +66,24 @@ class AppDatabase extends _$AppDatabase {
     for (final seed in seeds) {
       await into(incomeSources).insert(
         IncomeSourcesCompanion.insert(
+          name: seed.name,
+          colorValue: seed.colorValue,
+          createdAt: DateTime.now(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _seedCategories() async {
+    const seeds = [
+      (name: 'Materiales', colorValue: 0xFF6A1B9A),
+      (name: 'Transporte', colorValue: 0xFF1565C0),
+      (name: 'Comida', colorValue: 0xFFEF6C00),
+      (name: 'Otros', colorValue: 0xFF546E7A),
+    ];
+    for (final seed in seeds) {
+      await into(categories).insert(
+        CategoriesCompanion.insert(
           name: seed.name,
           colorValue: seed.colorValue,
           createdAt: DateTime.now(),

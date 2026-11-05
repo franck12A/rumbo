@@ -32,6 +32,12 @@ const appShellDestinations = <AppShellDestination>[
     icon: Icons.account_balance_wallet_outlined,
     selectedIcon: Icons.account_balance_wallet,
   ),
+  AppShellDestination(
+    path: AppRoutes.categories,
+    label: AppStrings.navCategories,
+    icon: Icons.category_outlined,
+    selectedIcon: Icons.category,
+  ),
 ];
 
 /// Lateral rail shared by every destination of the app.
