@@ -48,8 +48,38 @@ Future<File> _createVersion2File(Directory directory) async {
           createdAt: DateTime(2026),
         ),
       );
+  await current.customStatement('DROP TABLE transactions');
   await current.customStatement('DROP TABLE categories');
   await current.customStatement('PRAGMA user_version = 2');
+  await current.close();
+  return file;
+}
+
+/// Builds a version 3 file: both existing features, an extra row in each and
+/// no transactions table yet.
+Future<File> _createVersion3File(Directory directory) async {
+  final file = _databaseFile(directory);
+  final current = AppDatabase.file(file);
+  await current
+      .into(current.incomeSources)
+      .insert(
+        IncomeSourcesCompanion.insert(
+          name: 'Kiosco',
+          colorValue: 0xFF1565C0,
+          createdAt: DateTime(2026),
+        ),
+      );
+  await current
+      .into(current.categories)
+      .insert(
+        CategoriesCompanion.insert(
+          name: 'Regalos',
+          colorValue: 0xFF00838F,
+          createdAt: DateTime(2026),
+        ),
+      );
+  await current.customStatement('DROP TABLE transactions');
+  await current.customStatement('PRAGMA user_version = 3');
   await current.close();
   return file;
 }
@@ -87,7 +117,7 @@ void main() {
       categories.map((row) => row.name),
       containsAll(<String>['Materiales', 'Transporte', 'Comida', 'Otros']),
     );
-    expect(await _schemaVersion(database), 3);
+    expect(await _schemaVersion(database), 4);
   });
 
   test(
@@ -108,7 +138,28 @@ void main() {
         categories.map((row) => row.name),
         containsAll(<String>['Materiales', 'Transporte', 'Comida', 'Otros']),
       );
-      expect(await _schemaVersion(database), 3);
+      expect(await _schemaVersion(database), 4);
+    },
+  );
+
+  test(
+    'should upgrade a version 3 database without losing existing data',
+    () async {
+      final file = await _createVersion3File(directory);
+
+      final database = AppDatabase.file(file);
+      addTearDown(database.close);
+
+      final sources = await database.select(database.incomeSources).get();
+      final categories = await database.select(database.categories).get();
+      final transactions = await database.select(database.transactions).get();
+
+      expect(sources, hasLength(3));
+      expect(sources.map((row) => row.name), contains('Kiosco'));
+      expect(categories, hasLength(5));
+      expect(categories.map((row) => row.name), contains('Regalos'));
+      expect(transactions, isEmpty);
+      expect(await _schemaVersion(database), 4);
     },
   );
 
