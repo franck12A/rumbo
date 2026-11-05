@@ -14,6 +14,10 @@ void main() {
       },
     );
 
+    test('should parse the thousand separator when there are no decimals', () {
+      expect(Money.fromDecimalString('10.000').cents, 1000000);
+    });
+
     test('should parse an amount with one decimal digit', () {
       expect(Money.fromDecimalString('10.000,5').cents, 1000050);
     });
@@ -35,7 +39,7 @@ void main() {
       '10.000,505',
       '.500',
       '10,',
-      '\$ 10.000,00',
+      r'$ 10.000,00',
       '1 000',
     ]) {
       test('should throw when the input is "$invalid"', () {

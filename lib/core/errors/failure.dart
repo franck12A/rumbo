@@ -1,16 +1,24 @@
 /// Typed failure raised by the data layer and mapped by the presentation layer.
 ///
-/// [message] is meant for logs and debugging, not for showing directly to users.
+/// [message] is meant for logs and debugging, not for showing directly to
+/// users.
 sealed class Failure {
   const Failure({this.message, this.cause});
 
   final String? message;
   final Object? cause;
 
+  /// Stable label used by [toString], since `runtimeType` can be minified.
+  String get _label => switch (this) {
+    DatabaseFailure() => 'DatabaseFailure',
+    ValidationFailure() => 'ValidationFailure',
+    NotFoundFailure() => 'NotFoundFailure',
+  };
+
   @override
   String toString() {
     final description = message;
-    return description == null ? '$runtimeType' : '$runtimeType: $description';
+    return description == null ? _label : '$_label: $description';
   }
 }
 

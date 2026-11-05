@@ -1,10 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rumbo/app/app_routes.dart';
+import 'package:rumbo/app/shell/app_shell.dart';
 import 'package:rumbo/features/home/presentation/pages/home_page.dart';
-
-abstract final class AppRoutes {
-  static const home = '/';
-}
+import 'package:rumbo/features/income_sources/presentation/pages/income_sources_page.dart';
 
 /// El router vive en un provider para que su ciclo de vida lo maneje Riverpod
 /// y no se reconstruya en cada rebuild del widget raíz.
@@ -12,10 +11,21 @@ final appRouterProvider = Provider<GoRouter>(
   (ref) => GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(
-        path: AppRoutes.home,
-        name: 'home',
-        builder: (context, state) => const HomePage(),
+      ShellRoute(
+        builder: (context, state, child) =>
+            AppShell(location: state.uri.path, child: child),
+        routes: [
+          GoRoute(
+            path: AppRoutes.home,
+            name: 'home',
+            builder: (context, state) => const HomePage(),
+          ),
+          GoRoute(
+            path: AppRoutes.incomeSources,
+            name: 'incomeSources',
+            builder: (context, state) => const IncomeSourcesPage(),
+          ),
+        ],
       ),
     ],
   ),

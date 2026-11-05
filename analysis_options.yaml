@@ -18,3 +18,7 @@ linter:
   rules:
     # Es una app, no un paquete publicado: no exigimos doc en cada miembro público.
     public_member_api_docs: false
+    # Dart 3.13 permite `new()` / `new name()` en las declaraciones de
+    # constructores. Preferimos la sintaxis clásica `ClassName()`: es más
+    # explícita y no depende del nombre de la clase para descubrir el tipo.
+    unnecessary_type_name_in_constructor: false

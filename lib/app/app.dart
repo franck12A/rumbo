@@ -7,7 +7,7 @@ import 'package:rumbo/core/l10n/app_locale.dart';
 import 'package:rumbo/core/l10n/strings_es_ar.dart';
 
 class RumboApp extends ConsumerWidget {
-  const new({super.key});
+  const RumboApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

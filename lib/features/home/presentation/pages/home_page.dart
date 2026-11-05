@@ -3,7 +3,7 @@ import 'package:rumbo/core/l10n/strings_es_ar.dart';
 
 /// Pantalla placeholder del esqueleto: se reemplaza por el dashboard real.
 class HomePage extends StatelessWidget {
-  const new({super.key});
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

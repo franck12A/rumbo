@@ -1,14 +1,13 @@
 import 'package:intl/intl.dart';
+import 'package:meta/meta.dart';
 
 /// Value object for money amounts.
 ///
 /// Amounts are always stored as [cents] so no floating point rounding can
 /// happen. Formatting is available through [format] for the presentation layer.
+@immutable
 final class Money implements Comparable<Money> {
   const Money.fromCents(this.cents);
-
-  /// Zero pesos.
-  static const zero = Money.fromCents(0);
 
   /// Parses an amount written in the Argentine format, like `10000`,
   /// `10.000,50` or `-1.234,56`.
@@ -33,10 +32,17 @@ final class Money implements Comparable<Money> {
     return Money.fromCents(isNegative ? -amountInCents : amountInCents);
   }
 
+  /// Zero pesos.
+  static const zero = Money.fromCents(0);
+
   static final _esArAmountPattern = RegExp(
     r'^[+-]?(?:\d{1,3}(?:\.\d{3})+|\d+)(?:,\d{1,2})?$',
   );
-  static final _signPattern = RegExp(r'^[+-]');
+  static final _signPattern = RegExp('^[+-]');
+  static final _wholeFormatter = NumberFormat.decimalPatternDigits(
+    locale: 'es_AR',
+    decimalDigits: 0,
+  );
 
   /// Signed amount in cents.
   final int cents;
@@ -85,9 +91,4 @@ final class Money implements Comparable<Money> {
 
   @override
   String toString() => format();
-
-  static final _wholeFormatter = NumberFormat.decimalPatternDigits(
-    locale: 'es_AR',
-    decimalDigits: 0,
-  );
 }
