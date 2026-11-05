@@ -72,6 +72,25 @@ void main() {
     expect(rows.map((row) => row.id), [active.id]);
   });
 
+  test('should list only archived sources in the archived stream', () async {
+    final active = await dao.insertSource(
+      name: 'Restaurante',
+      colorValue: _color,
+      createdAt: _createdAt,
+    );
+    final archived = await dao.insertSource(
+      name: 'Pelotas',
+      colorValue: _color,
+      createdAt: _createdAt,
+    );
+    await dao.setArchivedAt(archived.id, DateTime(2026, 2));
+
+    final rows = await dao.watchArchived().first;
+
+    expect(rows.map((row) => row.id), [archived.id]);
+    expect(rows.map((row) => row.id), isNot(contains(active.id)));
+  });
+
   test(
     'should set and clear archivedAt when archiving and restoring',
     () async {

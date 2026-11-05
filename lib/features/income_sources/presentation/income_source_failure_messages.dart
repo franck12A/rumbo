@@ -11,3 +11,10 @@ String incomeSourceFailureMessage(Failure failure) => switch (failure) {
     AppStrings.incomeSourceNameDuplicateError,
   _ => AppStrings.incomeSourcesGenericError,
 };
+
+/// Copy used when a restore is rejected because an active source owns the name.
+String incomeSourceRestoreFailureMessage(Failure failure) => switch (failure) {
+  ValidationFailure(field: 'name.duplicate') =>
+    AppStrings.incomeSourceRestoreDuplicateError,
+  _ => incomeSourceFailureMessage(failure),
+};

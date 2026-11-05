@@ -59,13 +59,14 @@ Future<void> confirmAndArchiveIncomeSource(
         content: const Text(AppStrings.incomeSourceArchivedMessage),
         action: SnackBarAction(
           label: AppStrings.undoAction,
-          onPressed: () => _restore(context, ref, source),
+          onPressed: () => restoreArchivedIncomeSource(context, ref, source),
         ),
       ),
     );
 }
 
-Future<void> _restore(
+/// Restores an archived source, used by the "Archivadas" tab and by "Deshacer".
+Future<void> restoreArchivedIncomeSource(
   BuildContext context,
   WidgetRef ref,
   IncomeSource source,
@@ -76,8 +77,19 @@ Future<void> _restore(
   }
   final failure = result.failureOrNull;
   if (failure != null) {
-    _showFailure(context, failure);
+    _showFailure(
+      context,
+      failure,
+      message: incomeSourceRestoreFailureMessage(failure),
+    );
+    return;
   }
+
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(
+      const SnackBar(content: Text(AppStrings.incomeSourceRestoredMessage)),
+    );
 }
 
 Future<String?> _submit(
@@ -101,8 +113,8 @@ Future<String?> _submit(
   return failure == null ? null : incomeSourceFailureMessage(failure);
 }
 
-void _showFailure(BuildContext context, Failure failure) {
-  ScaffoldMessenger.of(
-    context,
-  ).showSnackBar(SnackBar(content: Text(incomeSourceFailureMessage(failure))));
+void _showFailure(BuildContext context, Failure failure, {String? message}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message ?? incomeSourceFailureMessage(failure))),
+  );
 }

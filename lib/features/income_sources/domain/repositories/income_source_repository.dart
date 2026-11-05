@@ -6,6 +6,9 @@ abstract interface class IncomeSourceRepository {
   /// Emits the active sources, ordered by name, every time they change.
   Stream<List<IncomeSource>> watchActive();
 
+  /// Emits the archived sources, ordered by name, every time they change.
+  Stream<List<IncomeSource>> watchArchived();
+
   Future<Result<IncomeSource>> getById(int id);
 
   Future<Result<IncomeSource>> create({

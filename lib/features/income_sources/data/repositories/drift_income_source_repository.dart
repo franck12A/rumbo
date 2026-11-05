@@ -18,6 +18,11 @@ final class DriftIncomeSourceRepository implements IncomeSourceRepository {
   );
 
   @override
+  Stream<List<IncomeSource>> watchArchived() => _dao.watchArchived().map(
+    (rows) => rows.map(IncomeSourceMapper.toDomain).toList(growable: false),
+  );
+
+  @override
   Future<Result<IncomeSource>> getById(int id) => _run(() => _dao.getById(id));
 
   @override

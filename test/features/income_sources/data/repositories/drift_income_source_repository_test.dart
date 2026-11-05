@@ -49,6 +49,23 @@ void main() {
     },
   );
 
+  test('should stream only archived sources when watching them', () async {
+    await repository.create(name: 'Restaurante', colorValue: _color);
+    final archived = (await repository.create(
+      name: 'Kiosco',
+      colorValue: _color,
+    )).valueOrNull!;
+    await repository.archive(archived.id);
+
+    final sources = await repository.watchArchived().first;
+
+    expect(sources.map((source) => source.id), [archived.id]);
+    expect(
+      sources.map((source) => source.name),
+      isNot(contains('Restaurante')),
+    );
+  });
+
   test(
     'should return a not found failure when the id does not exist',
     () async {

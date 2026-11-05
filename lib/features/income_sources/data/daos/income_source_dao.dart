@@ -17,6 +17,13 @@ class IncomeSourceDao extends DatabaseAccessor<AppDatabase>
     return query.watch();
   }
 
+  Stream<List<IncomeSourceRow>> watchArchived() {
+    final query = select(incomeSources)
+      ..where((source) => source.archivedAt.isNotNull())
+      ..orderBy([(source) => OrderingTerm.asc(source.name.lower())]);
+    return query.watch();
+  }
+
   Future<List<IncomeSourceRow>> getActive() {
     final query = select(incomeSources)
       ..where((source) => source.archivedAt.isNull())
