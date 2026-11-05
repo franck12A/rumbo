@@ -16,7 +16,8 @@ Dominio:
 ## 2. Stack fijo (no cambiar sin pedir permiso)
 
 - Flutter stable, Dart con null safety y `strict` analysis.
-- Base de datos: `drift` + `sqlite3_flutter_libs`.
+- Base de datos: `drift` + `sqlite3` (versión vigente) con `NativeDatabase` de `package:drift/native.dart`.
+  Desde drift 2.32 (sqlite3 3.x) SQLite se empaqueta automáticamente en la app vía build hooks, así que **no** se agrega `sqlite3_flutter_libs` (discontinuado) ni hace falta setup extra en Windows desktop.
 - Estado y DI: `flutter_riverpod` con `riverpod_annotation` / `riverpod_generator`.
 - Navegación: `go_router`.
 - Modelos inmutables: `freezed` (+ `json_serializable` solo si hace falta).
