@@ -8,6 +8,8 @@ import 'package:rumbo/features/categories/data/daos/category_dao.dart';
 import 'package:rumbo/features/categories/data/tables/categories_table.dart';
 import 'package:rumbo/features/income_sources/data/daos/income_source_dao.dart';
 import 'package:rumbo/features/income_sources/data/tables/income_sources_table.dart';
+import 'package:rumbo/features/savings_goals/data/daos/savings_goal_dao.dart';
+import 'package:rumbo/features/savings_goals/data/tables/savings_goals_table.dart';
 import 'package:rumbo/features/transactions/data/daos/transaction_dao.dart';
 import 'package:rumbo/features/transactions/data/tables/transactions_table.dart';
 
@@ -17,8 +19,8 @@ part 'app_database.g.dart';
 ///
 /// Business tables are declared by each feature and added to this class.
 @DriftDatabase(
-  tables: [IncomeSources, Categories, Transactions],
-  daos: [IncomeSourceDao, CategoryDao, TransactionDao],
+  tables: [IncomeSources, Categories, Transactions, SavingsGoals],
+  daos: [IncomeSourceDao, CategoryDao, TransactionDao, SavingsGoalDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -30,7 +32,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.file(File file) : super(NativeDatabase(file));
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -55,6 +57,10 @@ class AppDatabase extends _$AppDatabase {
         await m.createIndex(transactionsDate);
         await m.createIndex(transactionsIncomeSourceId);
         await m.createIndex(transactionsCategoryId);
+      }
+      if (from < 5) {
+        await m.createTable(savingsGoals);
+        await m.createIndex(savingsGoalsTargetDate);
       }
     },
     beforeOpen: (details) async {

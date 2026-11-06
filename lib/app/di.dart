@@ -6,6 +6,8 @@ import 'package:rumbo/features/categories/data/repositories/drift_category_repos
 import 'package:rumbo/features/categories/domain/repositories/category_repository.dart';
 import 'package:rumbo/features/income_sources/data/repositories/drift_income_source_repository.dart';
 import 'package:rumbo/features/income_sources/domain/repositories/income_source_repository.dart';
+import 'package:rumbo/features/savings_goals/data/repositories/drift_savings_goal_repository.dart';
+import 'package:rumbo/features/savings_goals/domain/repositories/savings_goal_repository.dart';
 import 'package:rumbo/features/transactions/data/repositories/drift_transaction_repository.dart';
 import 'package:rumbo/features/transactions/domain/lookups/category_lookup.dart';
 import 'package:rumbo/features/transactions/domain/lookups/income_source_lookup.dart';
@@ -30,6 +32,10 @@ IncomeSourceLookup incomeSourceLookup(Ref ref) =>
 @Riverpod(keepAlive: true)
 CategoryLookup categoryLookup(Ref ref) =>
     CategoryLookupAdapter(ref.watch(categoryRepositoryProvider));
+
+@Riverpod(keepAlive: true)
+SavingsGoalRepository savingsGoalRepository(Ref ref) =>
+    DriftSavingsGoalRepository(ref.watch(appDatabaseProvider).savingsGoalDao);
 
 @Riverpod(keepAlive: true)
 TransactionRepository transactionRepository(Ref ref) =>
