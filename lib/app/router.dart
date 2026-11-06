@@ -5,6 +5,7 @@ import 'package:rumbo/app/shell/app_shell.dart';
 import 'package:rumbo/features/categories/presentation/pages/categories_page.dart';
 import 'package:rumbo/features/home/presentation/pages/home_page.dart';
 import 'package:rumbo/features/income_sources/presentation/pages/income_sources_page.dart';
+import 'package:rumbo/features/transactions/presentation/pages/transactions_page.dart';
 
 /// El router vive en un provider para que su ciclo de vida lo maneje Riverpod
 /// y no se reconstruya en cada rebuild del widget raíz.
@@ -30,6 +31,11 @@ final appRouterProvider = Provider<GoRouter>(
             path: AppRoutes.categories,
             name: 'categories',
             builder: (context, state) => const CategoriesPage(),
+          ),
+          GoRoute(
+            path: AppRoutes.transactions,
+            name: 'transactions',
+            builder: (context, state) => const TransactionsPage(),
           ),
         ],
       ),

@@ -27,6 +27,12 @@ const appShellDestinations = <AppShellDestination>[
     selectedIcon: Icons.home,
   ),
   AppShellDestination(
+    path: AppRoutes.transactions,
+    label: AppStrings.navTransactions,
+    icon: Icons.receipt_long_outlined,
+    selectedIcon: Icons.receipt_long,
+  ),
+  AppShellDestination(
     path: AppRoutes.incomeSources,
     label: AppStrings.navIncomeSources,
     icon: Icons.account_balance_wallet_outlined,

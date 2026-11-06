@@ -5,4 +5,6 @@ abstract final class AppRoutes {
   static const incomeSources = '/income-sources';
 
   static const categories = '/categories';
+
+  static const transactions = '/transactions';
 }

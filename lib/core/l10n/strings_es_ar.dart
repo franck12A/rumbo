@@ -16,6 +16,147 @@ abstract final class AppStrings {
 
   static const navCategories = 'Categorías';
 
+  static const navTransactions = 'Movimientos';
+
+  static const transactionsTitle = 'Movimientos';
+
+  static const transactionsPreviousMonth = 'Mes anterior';
+
+  static const transactionsNextMonth = 'Mes siguiente';
+
+  static const transactionsCurrentMonth = 'Ir al mes actual';
+
+  static const transactionsSummaryIncome = 'Ingresos';
+
+  static const transactionsSummaryExpense = 'Gastos';
+
+  static const transactionsSummaryBalance = 'Balance';
+
+  static const transactionsNewIncome = 'Nuevo ingreso';
+
+  static const transactionsNewExpense = 'Nuevo gasto';
+
+  static const transactionsEmptyTitle = 'No hay movimientos este mes';
+
+  static const transactionsEmptySubtitle =
+      'Cargá un ingreso o un gasto para empezar.';
+
+  static const transactionsErrorTitle = 'No pudimos cargar los movimientos.';
+
+  static const transactionsGenericError = 'Algo salió mal. Probá de nuevo.';
+
+  static const transactionCreateTitle = 'Nuevo movimiento';
+
+  static const transactionEditTitle = 'Editar movimiento';
+
+  static const transactionTypeIncome = 'Ingreso';
+
+  static const transactionTypeExpense = 'Gasto';
+
+  static const transactionAmountLabel = 'Monto';
+
+  static const transactionAmountHint = 'Ej.: 10.000,00';
+
+  static const transactionDateLabel = 'Fecha';
+
+  static String transactionDateValue(String date) =>
+      '$transactionDateLabel: $date';
+
+  static const transactionSourceLabel = 'Fuente de ingreso';
+
+  static const transactionCategoryLabel = 'Categoría';
+
+  static const transactionReferenceHint = 'Seleccioná una opción';
+
+  static const transactionNoteLabel = 'Nota (opcional)';
+
+  static const transactionDeleteTooltip = 'Eliminar';
+
+  static const transactionDeleteTitle = 'Eliminar movimiento';
+
+  static const transactionDeleteAction = 'Eliminar';
+
+  static const transactionDeleteBody =
+      '¿Eliminar este movimiento? Podés deshacerlo desde el aviso.';
+
+  static const transactionDeletedMessage = 'Movimiento eliminado.';
+
+  static const transactionArchivedSuffix = '(archivada)';
+
+  static const transactionAmountInvalidError =
+      'Ingresá un monto válido, por ejemplo 10.000,00.';
+
+  static const transactionAmountNotPositiveError =
+      'El monto tiene que ser mayor que cero.';
+
+  static const transactionNoteTooLongError =
+      'La nota puede tener hasta 200 caracteres.';
+
+  static const transactionSourceRequiredError = 'Elegí una fuente de ingreso.';
+
+  static const transactionSourceUnexpectedError =
+      'Un ingreso no lleva categoría.';
+
+  static const transactionSourceNotFoundError =
+      'La fuente de ingreso ya no existe.';
+
+  static const transactionSourceArchivedError =
+      'La fuente de ingreso está archivada. Elegí una activa.';
+
+  static const transactionCategoryRequiredError = 'Elegí una categoría.';
+
+  static const transactionCategoryUnexpectedError =
+      'Un gasto no lleva fuente de ingreso.';
+
+  static const transactionCategoryNotFoundError = 'La categoría ya no existe.';
+
+  static const transactionCategoryArchivedError =
+      'La categoría está archivada. Elegí una activa.';
+
+  static const transactionNotFoundError = 'El movimiento ya no existe.';
+
+  static const transactionNoIncomeSourcesTitle =
+      'No hay fuentes de ingreso activas';
+
+  static const transactionNoIncomeSourcesBody =
+      'Agregá o restaurá una fuente para poder cargar ingresos.';
+
+  static const transactionNoCategoriesTitle = 'No hay categorías activas';
+
+  static const transactionNoCategoriesBody =
+      'Agregá o restaurá una categoría para poder cargar gastos.';
+
+  static const transactionGoToIncomeSources = 'Ir a Fuentes de ingreso';
+
+  static const transactionGoToCategories = 'Ir a Categorías';
+
+  static const monthNames = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ];
+
+  /// Indexed by [DateTime.weekday], so the first entry is unused.
+  static const weekdayNames = [
+    '',
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+    'Domingo',
+  ];
+
   static const activeTabLabel = 'Activas';
 
   static const archivedTabLabel = 'Archivadas';
