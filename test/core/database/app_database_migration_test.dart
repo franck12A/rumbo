@@ -50,6 +50,7 @@ Future<File> _createVersion2File(Directory directory) async {
       );
   await current.customStatement('DROP TABLE transactions');
   await current.customStatement('DROP TABLE categories');
+  await current.customStatement('DROP TABLE savings_goals');
   await current.customStatement('PRAGMA user_version = 2');
   await current.close();
   return file;
@@ -79,7 +80,30 @@ Future<File> _createVersion3File(Directory directory) async {
         ),
       );
   await current.customStatement('DROP TABLE transactions');
+  await current.customStatement('DROP TABLE savings_goals');
   await current.customStatement('PRAGMA user_version = 3');
+  await current.close();
+  return file;
+}
+
+/// Builds a version 4 file: every feature the app had before savings goals.
+Future<File> _createVersion4File(Directory directory) async {
+  final file = _databaseFile(directory);
+  final current = AppDatabase.file(file);
+  final sources = await current.select(current.incomeSources).get();
+  await current
+      .into(current.transactions)
+      .insert(
+        TransactionsCompanion.insert(
+          type: 'income',
+          amountCents: 150000,
+          date: 20261105,
+          incomeSourceId: Value(sources.first.id),
+          createdAt: DateTime.utc(2026, 11, 5, 12),
+        ),
+      );
+  await current.customStatement('DROP TABLE savings_goals');
+  await current.customStatement('PRAGMA user_version = 4');
   await current.close();
   return file;
 }
@@ -117,7 +141,7 @@ void main() {
       categories.map((row) => row.name),
       containsAll(<String>['Materiales', 'Transporte', 'Comida', 'Otros']),
     );
-    expect(await _schemaVersion(database), 4);
+    expect(await _schemaVersion(database), 5);
   });
 
   test(
@@ -138,7 +162,7 @@ void main() {
         categories.map((row) => row.name),
         containsAll(<String>['Materiales', 'Transporte', 'Comida', 'Otros']),
       );
-      expect(await _schemaVersion(database), 4);
+      expect(await _schemaVersion(database), 5);
     },
   );
 
@@ -159,7 +183,27 @@ void main() {
       expect(categories, hasLength(5));
       expect(categories.map((row) => row.name), contains('Regalos'));
       expect(transactions, isEmpty);
-      expect(await _schemaVersion(database), 4);
+      expect(await _schemaVersion(database), 5);
+    },
+  );
+
+  test(
+    'should upgrade a version 4 database keeping the existing data',
+    () async {
+      final file = await _createVersion4File(directory);
+
+      final database = AppDatabase.file(file);
+      addTearDown(database.close);
+
+      final goals = await database.select(database.savingsGoals).get();
+      final transactions = await database.select(database.transactions).get();
+      final sources = await database.select(database.incomeSources).get();
+
+      expect(goals, isEmpty);
+      expect(transactions, hasLength(1));
+      expect(transactions.single.amountCents, 150000);
+      expect(sources, hasLength(2));
+      expect(await _schemaVersion(database), 5);
     },
   );
 
