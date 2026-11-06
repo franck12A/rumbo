@@ -20,4 +20,16 @@ final class TransactionFilter {
   final TransactionType? type;
   final int? incomeSourceId;
   final int? categoryId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is TransactionFilter &&
+      other.from == from &&
+      other.to == to &&
+      other.type == type &&
+      other.incomeSourceId == incomeSourceId &&
+      other.categoryId == categoryId;
+
+  @override
+  int get hashCode => Object.hash(from, to, type, incomeSourceId, categoryId);
 }
